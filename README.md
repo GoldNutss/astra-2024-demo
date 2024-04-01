@@ -10,15 +10,18 @@ nano /etc/hosts - Файл будет иметь вид
 ---
 astra – необходимо изменить в соответствии с таблицей
 #### Зайти в файл
+
 nano /etc/hostname – файл будет иметь вид
+
 ---
 astra – необходимо изменить в соответствии с таблицей
 на машине которая будет использоваться в качестве сервера имен (dns) написать hq-srv.hq.work
 
 ---
 ## Настройка Сети
+
 nano /etc/network/interfaces – в этом файле необходимо добавить записи
----
+
 auto eth0 – номер интерфейса
 
 iface eth0 inet static/dhcp – в зависимости от типа адреса (в случае если выбран dhcp 
@@ -32,70 +35,81 @@ gateway 10.10.10.1 – если есть
 
 ---
 ## Включить пересылку пакетов (выполняется только на роутерах)
+
 Зайти в файл - Nano /etc/sysctl.conf
 
 Найти строчку «net.ipv4.ip_forward=1» и раскоментировать
 
 Зайти в файл - Nano /etc/resolv.conf – где необходимо прописать
+
 Nameserver 172.16.100.10
+
 Nameserver 8.8.8.8
+
 Выйти из файла и прописать 
+
 Systemctl restart networking
-Настройка доступа в интернет на ISP и раздача его в соседние сети 
-iptables -t nat -A POSTROUTING -s 172.16.100.0/26 –o eth3 -j MASQUERADE
-172.16.100.0 – сеть которой необходимо дать доступ к интернету
-Eth3 – интерфейс который подключен к сети NAT
-Повторить для каждой сети.
-После этого надо сохранить эти правила. Для этого потребуется сделать следующие действия.
-nano /etc/network/if-post-down.d/iptables
-#!/bin/sh
-touch /etc/iptables_rules
-chmod 640 /etc/iptables_rules
-iptables-save > /etc/iptables.rules
-exit 0
-Выйти из файла
-chmod +x /etc/network/if-post-down.d/iptables
-Далее
-Sudo nano /etc/network/if-pre-up.d/iptables
-#!/bin/sh
-iptables-restore < /etc/iptables.rules
-exit 0
-Выйти из файла
-chmod +x  /etc/network/if-pre-up.d/iptables
-Установка frr
+
+---
+## Установка frr
+
 apt-cdrom add
+
 apt update 
+
 apt install curl -y
+
 mkdir /usr/share/keyrings – создать каталог для ключей 
-Установить ключи
-curl –s https://deb.frrouting.org/frr/keys.gpg | sudo tee /usr/share/keyrings/frrouting.gpg > /dev/null
-Зайти в файл 
-nano /etc/apt/sources.list – в нем написать следующее
+
+Установить ключи - curl –s https://deb.frrouting.org/frr/keys.gpg | sudo tee /usr/share/keyrings/frrouting.gpg > /dev/null
+Зайти в файл - nano /etc/apt/sources.list – в нем написать следующее
 deb https://dl.astralinux.ru/astra/stable/orel/repository orel main contrib non-free
-Зайти в файл
-nano /etc/apt/sources.list.d/frr.list – в нем написать следующее
+
+Зайти в файл - nano /etc/apt/sources.list.d/frr.list – в нем написать следующее
 deb [trusted=true signed-by=/usr/share/keyrings/frrouting.gpg] https://deb.frrouting.org/frr stretch frr-stable
+
 Обновляемся и устанавливаем frr
+
 apt update && apt install frr frr-pythontools
-Настройка frr
+
+---
+## Настройка frr
+
 nano /etc/frr/daemons
+
 ospf = no – исправить на yes
+
 systemctl restart frr
+
 Vtysh
+
 configure
+
 ip forwarding
+
 int eth0 (интерфейс, который смотрит к конечному пользователю)
+
 Ip ospf passive
+
 Router ospf
+
 Network 10.10.10.0/24 (подсеть которую знает настраиваемый роутер) area 0
 Повторить для всех подсетей которые знает роутер
+
 end
+
 write
+
 Повторить на всех роутерах 
+
 Для того чтобы проверить необходимо написать команду
+
 show ip route
+
 Также после настройки на всех роутерах все узлы должны пинговаться друг с другом. 
-Установка и настройка dhcp
+
+---
+## Установка и настройка dhcp
 apt-cdrom add
 apt install isc-dhcp-server –y
 nano /etc/default/isc-dhcp-server
