@@ -33,7 +33,7 @@ gateway 10.10.10.1 – если есть\
 
 sudo apt install resolvconf
 
-Далее мы включаем и запускаем службу resolvconf:
+#### Далее мы включаем и запускаем службу resolvconf:
 
 $ sudo systemctl enable resolvconf.service
 
@@ -48,10 +48,6 @@ $ sudo systemctl status resolvconf.service
 Nameserver 172.16.100.10
 
 Nameserver 8.8.8.8
-
-Выйти из файла и прописать 
-
-Systemctl restart networking
 
 ### Следующие действия выполняются на роутерах
 
@@ -77,12 +73,16 @@ post-down iptunnel del gre1
         
 сохранить и выйти
 
+Systemctl restart networking
+
 ---
 ## Включить пересылку пакетов (выполняется только на роутерах)
 
 Зайти в файл - Nano /etc/sysctl.conf
 
 Найти строчку «net.ipv4.ip_forward=1» и раскоментировать
+
+Systemctl restart networking 
 
 ---
 ## Установка frr
