@@ -181,6 +181,12 @@ fixed-address 172.16.100.10;} – выдача фиксированного ад
 
 сохранить и выйти
 
+проверка файлов на ошибки 
+
+dhcpd -t -cf /etc/default/isc-dhcp-server 
+
+dhcpd -t -cf /etc/dhcp/dhcp.conf
+
 systemctl restart isc-dhcp-server
 
 ---
