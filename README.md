@@ -217,7 +217,9 @@ iperf3 -s -запустить серверный режим
 
 На HQ-R:
 
-iperf3 -c 10.10.10.1 (ip ISP)
+script -c ‘iperf3 -c 10.10.10.1(IPv4 ISP, смотрящий в сторону HQ-R) –-get-server-output' iperf3logfile.txt (файлжурнала)
+
+cat iperf3_logfile.txt
 
 #### Так же существует более простой способ установить iperf 1 версии
 
@@ -228,6 +230,8 @@ apt install iperf
 ---
 ## Настройка SSH
 
+На сервере ssh
+
 apt-cdrom add
 
 apt update && apt install ssh
@@ -236,23 +240,104 @@ nano /etc/ssh/sshd_config
 
 Найти строку #Port 22, раскоментировать и изменить на Port 2222
 
-Найти строку #PermitRootLogin prohibit, раскоментировать изменить на PermitRootLogin ye	
+Найти строку #PermitRootLogin prohibit, раскоментировать изменить на PermitRootLogin no
 
 добавить строку
 
- AllowUsers admin netadmin
+AllowUsers admin netadmin
 
- Сохранить и выйти
+Сохранить и выйти
+
+systemctl enable ssh
 
 systemctl restart ssh 
 
 данные манипуляции проделываются на сервере ssh
 
-nano /etc/ssh/ssh_config
+На хостах
 
-раскоментировать “#Port 22” и изменить на “Port 2222”
+ssh-keygen -t rsa (Жать enter, необходимо запомнить путь куда сохраняются ключи)
 
-ssh admin@172.16.100.10 (IP HQ-SRV) – подключение к серверу  ssh
+scp root/.ssh/id_rsa.pub admin@172.16.100.10 -p 2222:root/.ssh/authorized_keys
+
+на сервере 
+
+nano /etc/ssh/sshd_config
+
+найти строку и раскомментировать  - PubkeyAutentification yes
+
+найти строку и раскомментировать - PasswordAuthentification yes
+
+сохранить выйти 
+
+на hq-r
+
+iptables -t nat -A PREROUTING -i eth2 -p tcp --dport 22 -j DNAT --to-destination 172.16.100.10:2222
+
+В каталоге /etc/network/if-post-down.d/ создать файл, например iptables, со следующим содержимым:
+
+nano /etc/network/if-post-down.d/iptables
+
+#!/bin/sh
+
+touch /etc/iptables.rules
+
+chmod 640 /etc/iptables.rules
+
+iptables-save > /etc/iptables.rules
+
+exit 0
+
+Сделать созданный сценарий исполнимым, выполнив в терминале команду:
+
+sudo chmod +x /etc/network/if-post-down.d/iptables
+
+В каталоге /etc/network/if-pre-up.d/ создать файл, например iptables, со следующим содержимым:
+
+nano /etc/network/if-pre-up.d/iptables
+
+#!/bin/sh
+
+iptables-restore < /etc/iptables.rules
+
+exit 0
+
+Сделать созданный сценарий исполнимым, выполнив в терминале команду:
+
+sudo chmod +x /etc/network/if-pre-up.d/iptables
+
+---
+## Создание Backup скриптов
+
+создадим простой bash-скрипт: sudo nano backup-script.sh
+
+#!/bin/sh
+
+backup_files="/home /etc /root /boot /opt"
+
+dest="/home/admin "
+
+day=$(date +%A)
+
+hostname=$(hostname -s)
+
+archive_file="$hostname-$day.tgz"
+
+echo "Backing up $backup_files to $dest/$archive_file"
+
+date
+
+echo
+
+sudo tar -cvpz $backup_files | ssh 172.16.100.50 –p 2222 "( cat > $dest/$archive_file)" (На BR-R убрать часть –p 2222)
+
+echo
+
+echo "Backup finished"
+
+date
+
+сохранить и выйти
 
 ---
 ## Настройка синхронизации времени NTP сервер
