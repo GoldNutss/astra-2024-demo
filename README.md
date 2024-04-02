@@ -31,9 +31,9 @@ netmask 255.255.255.0 – в соответсвии с таблицей
 
 gateway 10.10.10.1 – если есть\
 
-sudo apt install resolvconf
-
 #### Далее мы включаем и запускаем службу resolvconf:
+
+sudo apt install resolvconf
 
 $ sudo systemctl enable resolvconf.service
 
