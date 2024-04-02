@@ -82,6 +82,8 @@ Systemctl restart networking
 
 Найти строчку «net.ipv4.ip_forward=1» и раскоментировать
 
+sudo sysctl -p
+
 Systemctl restart networking 
 
 ---
