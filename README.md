@@ -69,7 +69,7 @@ up ifconfig gre1 multicast
 
 pre-up iptunnel add gre1 mode gre remote 20.20.20.10 local 10.10.10.10 dev eth0
 
-pointopoint 10.0.1.2
+pointopoint 10.0.0.2
 
 post-down iptunnel del gre1
         
@@ -115,6 +115,8 @@ nano /etc/frr/daemons
 
 ospf = no – исправить на yes
 
+ospf6d = no – исправить на yes
+
 systemctl restart frr
 
 Vtysh
@@ -129,7 +131,7 @@ Ip ospf passive
 
 Router ospf
 
-Network 10.10.10.0/24 (подсеть которую знает настраиваемый роутер) area 0
+Network 10.0.0.0/30 (подсеть gre туннеля и все подсети которые знает роутер кроме сетей которые смотрят на isp) area 0
 Повторить для всех подсетей которые знает роутер
 
 end
