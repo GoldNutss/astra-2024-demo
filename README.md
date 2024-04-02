@@ -55,6 +55,8 @@ Systemctl restart networking
 
 ### Следующие действия выполняются на роутерах
 
+Зайти в файл - nano /etc/network/interfaces
+
 auto gre1
 
 iface gre1 inet static
