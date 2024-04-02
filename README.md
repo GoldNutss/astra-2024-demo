@@ -106,7 +106,7 @@ deb [signed-by=/usr/share/keyrings/frrouting.gpg] https://deb.frrouting.org/frr 
 
 Обновляемся и устанавливаем frr
 
-apt update && apt install frr frr-pythontools
+apt update && apt install frr
 
 ---
 ## Настройка frr
