@@ -359,6 +359,12 @@ date
 
 сохранить и выйти
 
+chmod +x backup-script.sh
+
+nano /etc/crontab 
+
+0 1 * * * ~/backup-script.sh
+
 ---
 ## Настройка синхронизации времени NTP сервер
 
