@@ -67,7 +67,7 @@ mtu 1400
 
 up ifconfig gre1 multicast
 
-pre-up iptunnel add gre1 mode gre remote 192.168.27.56 local 192.168.27.137 dev eth0
+pre-up iptunnel add gre1 mode gre remote 20.20.20.10 local 10.10.10.10 dev eth0
 
 pointopoint 10.0.1.2
 
