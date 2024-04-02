@@ -363,7 +363,19 @@ chmod +x backup-script.sh
 
 nano /etc/crontab 
 
-0 1 * * * ~/backup-script.sh
+0 1 * * * ~./backup-script.sh
+
+Сохранить и выйти 
+
+./backup-script.sh - проверка работы скрипта
+
+### на hq-srv
+
+cd /home/admin
+
+ls 
+
+tar -tf HQ-R-14.03.24.tar.gz | less
 
 ---
 ## Настройка синхронизации времени NTP сервер
