@@ -100,11 +100,9 @@ apt install curl -y
 mkdir /usr/share/keyrings – создать каталог для ключей 
 
 Установить ключи - curl –s https://deb.frrouting.org/frr/keys.gpg | sudo tee /usr/share/keyrings/frrouting.gpg > /dev/null
-Зайти в файл - nano /etc/apt/sources.list – в нем написать следующее
-deb https://dl.astralinux.ru/astra/stable/orel/repository orel main contrib non-free
 
-Зайти в файл - nano /etc/apt/sources.list.d/frr.list – в нем написать следующее
-deb [trusted=true signed-by=/usr/share/keyrings/frrouting.gpg] https://deb.frrouting.org/frr stretch frr-stable
+Зайти в файл - nano /etc/apt/sources.list – в нем написать следующее
+deb [signed-by=/usr/share/keyrings/frrouting.gpg] https://deb.frrouting.org/frr stretch frr-stable
 
 Обновляемся и устанавливаем frr
 
