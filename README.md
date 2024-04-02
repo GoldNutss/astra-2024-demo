@@ -230,7 +230,7 @@ apt install iperf
 ---
 ## Настройка SSH
 
-На сервере ssh
+### На сервере ssh
 
 apt-cdrom add
 
@@ -252,15 +252,13 @@ systemctl enable ssh
 
 systemctl restart ssh 
 
-данные манипуляции проделываются на сервере ssh
-
-На хостах
+### На хостах
 
 ssh-keygen -t rsa (Жать enter, необходимо запомнить путь куда сохраняются ключи)
 
 scp root/.ssh/id_rsa.pub admin@172.16.100.10 -p 2222:root/.ssh/authorized_keys
 
-на сервере 
+### на сервере 
 
 nano /etc/ssh/sshd_config
 
@@ -270,7 +268,7 @@ nano /etc/ssh/sshd_config
 
 сохранить выйти 
 
-на hq-r
+### на hq-r
 
 iptables -t nat -A PREROUTING -i eth2 -p tcp --dport 22 -j DNAT --to-destination 172.16.100.10:2222
 
@@ -305,6 +303,28 @@ exit 0
 Сделать созданный сценарий исполнимым, выполнив в терминале команду:
 
 sudo chmod +x /etc/network/if-pre-up.d/iptables
+
+### ограничение доступа для CLI
+
+### на сервере ssh 
+
+файл: sudo nano /etc/hosts.deny и запретить все подключения от CLI:
+
+SSHD: 30.30.30.10
+
+SSHD: 172.16.200.10
+
+Чтобы разрешить подключения со всех устройств, кроме CLI нужно зайти в файл: sudo nano /etc/hosts.allow
+
+SSHD: 172.16.100.0/26
+
+SSHD: 192.168.10.0/28
+
+SSHD: 10.10.10.0/24
+
+SSHD: 20.20.20.0/24
+
+SSHD: 30.30.30.1
 
 ---
 ## Создание Backup скриптов
